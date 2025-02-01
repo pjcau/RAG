@@ -2,7 +2,6 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.docstore.document import Document
@@ -14,24 +13,16 @@ import tempfile
 from langchain_community.document_loaders import BSHTMLLoader
 from langchain.memory import ConversationBufferMemory
 from dotenv import load_dotenv
+from langchain_ollama import OllamaEmbeddings
+from langchain_ollama import OllamaLLM
 
+# test with https://www.snapy.ai/
 
 # Configuration variables
-CHUNK_SIZE = 300
-CHUNK_OVERLAP = 50
-MAX_TOKENS = 15000
-MODEL_NAME = "gpt-4o-mini"
+CHUNK_SIZE = 100
+CHUNK_OVERLAP = 20
+MODEL_NAME = "llama3.2"
 TEMPERATURE = 0.4
-
- 
-# Load the environment variables from .env file
-load_dotenv()
-
-# Set up OpenAI API key
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    OPENAI_API_KEY = input("Please enter your OpenAI API key: ")
-    os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
 def scrape_website(url):
     headers = {
@@ -130,12 +121,8 @@ def print_sample_embeddings(texts, embeddings):
     else:
         print("No texts available for embedding sample.")
 
-# Set up OpenAI language model
-llm = ChatOpenAI(
-    model_name=MODEL_NAME,
-    temperature=TEMPERATURE,
-    max_tokens=MAX_TOKENS
-)
+# Set up Ollama language model
+llm = OllamaLLM(model=MODEL_NAME) 
 
 # Set up the retrieval-based QA system with a simplified prompt template
 template = """Context: {context}
@@ -191,7 +178,9 @@ if __name__ == "__main__":
                 continue
             
             print("Creating embeddings and vector store...")
-            embeddings = OpenAIEmbeddings()
+            
+            # Load embedding model
+            embeddings = OllamaEmbeddings(model="llama3.2")
             
             print_sample_embeddings(texts, embeddings)
             
