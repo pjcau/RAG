@@ -7,7 +7,12 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from dotenv import load_dotenv
 from langchain_ollama import OllamaEmbeddings
-from langchain_ollama import OllamaLLM
+#from langchain_ollama import OllamaLLM
+from langchain_core.tools import tool
+from langchain_ollama import ChatOllama
+
+# NON FUNZIONA implementazione
+
 
 # Configuration variables
 CHUNK_SIZE = 100
@@ -26,7 +31,7 @@ class ParaphrasedQuery(BaseModel):
 class QueryExpander:
     """A class to handle query expansion using LangChain and OpenAI."""
     
-    def __init__(self, api_key: str = None):
+    def __init__(self):
         """Initialize the QueryExpander with necessary components."""
         
         # Define the system prompt
@@ -48,16 +53,17 @@ class QueryExpander:
         )
 
         # Initialize the language model
-        self.llm = OllamaLLM(
+        llm = ChatOllama(
             model=MODEL_NAME,
-            temperature=TEMPERATURE
-        )        
-
+            emperature=TEMPERATURE      
+        # other params...
+        ).bind_tools([ParaphrasedQuery])
+        
         # Bind tools and create analyzer
         #self.llm_with_tools = self.llm.bind_tools([ParaphrasedQuery])
         self.query_analyzer = (
             self.prompt 
-           # | self.llm_with_tools 
+            #| self.llm_with_tools 
             | PydanticToolsParser(tools=[ParaphrasedQuery])
         )
     

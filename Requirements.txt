@@ -159,3 +159,4 @@ fitz
 pytesseract
 pymupdf
 langchain_ollama
+langchain_core

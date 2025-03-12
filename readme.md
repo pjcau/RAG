@@ -10,6 +10,10 @@ pip install --upgrade pip
 
 pip install -r requirements.txt
 
+and this in one command
+
+python3.11 -m venv ../myenv && source .//myenv/bin/activate && pip install requests beautifulsoup4 langchain langchain-openai faiss-cpu numpy lxml openai && pip install --upgrade pip && pip install -r requirements.txt
+
 # AWS Deployment Guide
 
 This guide walks you through the process of deploying your application on an AWS EC2 instance.
