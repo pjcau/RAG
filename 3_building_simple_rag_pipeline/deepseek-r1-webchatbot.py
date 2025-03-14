@@ -3,8 +3,8 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.embeddings import OllamaEmbeddings
-from langchain_community.chat_models import ChatOllama
+from langchain_ollama import OllamaEmbeddings
+from langchain_ollama import ChatOllama
 from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.docstore.document import Document
@@ -15,10 +15,12 @@ import tempfile
 from langchain_community.document_loaders import BSHTMLLoader
 from langchain.memory import ConversationBufferMemory
 
+# To run this ...   "streamlit run deepseek-r1-webchatbot.py"
+
 # Configuration variables
 CHUNK_SIZE = 300
 CHUNK_OVERLAP = 50
-MODEL_NAME = "deepseek-r1:latest"
+MODEL_NAME = "llama3.2"
 TEMPERATURE = 0.4
 
 # Initialize session state variables
@@ -74,7 +76,7 @@ def initialize_rag_pipeline(texts):
         )
         
         # Create embeddings
-        embeddings = OllamaEmbeddings(model="deepseek-r1:latest")
+        embeddings = OllamaEmbeddings(model=MODEL_NAME)
         
         # Create vector store
         vectorstore = FAISS.from_documents(texts, embeddings)
@@ -166,7 +168,7 @@ def main():
         3. Ask questions about the content
         
         The system uses:
-        - Ollama (deepseek-r1) for text generation
+        - Ollama ({MODEL_NAME}) for text generation
         - FAISS for vector storage
         - LangChain for the RAG pipeline
         """)
