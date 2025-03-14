@@ -4,8 +4,7 @@ import gradio as gr
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain.chains import RetrievalQA
-from langchain_core.runnables import  RunnableSequence
+from langchain.chains import RetrievalQA, LLMChain
 from langchain.prompts import PromptTemplate
 import pymupdf as fitz  # Changed import
 import pytesseract
@@ -20,10 +19,10 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_ollama import ChatOllama
 
 # Constants
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 100
-MODEL_NAME = "llama3.2"
-TEMPERATURE = 0.0
+CHUNK_SIZE = 200
+CHUNK_OVERLAP = 30
+MODEL_NAME = "phi4:latest"
+TEMPERATURE = 0.3
 
 # Load environment variables
 load_dotenv()
@@ -31,7 +30,8 @@ load_dotenv()
 # Initialize LLM
 llm = ChatOllama(
             model=MODEL_NAME,
-            temperature=TEMPERATURE
+            temperature=TEMPERATURE,
+            verbose=True
         )   
 
 # Define the QA prompt template
@@ -88,7 +88,7 @@ def create_embeddings_and_vectorstore(texts):
     vectorstore = FAISS.from_texts(texts, embeddings)
     return vectorstore
 
-def expand_query(query: str, llm: ChatOllama) -> str:
+def expand_query(query: str, llm: LLMChain) -> str:
     """Expand the original query with related terms."""
     prompt = PromptTemplate(
         input_variables=["query"],
@@ -99,8 +99,8 @@ def expand_query(query: str, llm: ChatOllama) -> str:
         
         Related terms:"""
     )
-    chain = RunnableSequence(llm=llm, prompt=prompt)
-    response = chain.invoke(query)
+    chain = LLMChain(llm=llm, prompt=prompt)
+    response = chain.run(query)
     expanded_terms = [term.strip() for term in response.split(',')]
     expanded_query = f"{query} {' '.join(expanded_terms)}"
     return expanded_query
