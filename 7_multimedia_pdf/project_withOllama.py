@@ -21,7 +21,7 @@ from langchain_ollama import ChatOllama
 # Constants
 CHUNK_SIZE = 200
 CHUNK_OVERLAP = 30
-MODEL_NAME = "phi4:latest"
+MODEL_NAME = "llama3.2:latest"
 TEMPERATURE = 0.3
 
 # Load environment variables
