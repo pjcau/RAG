@@ -1,6 +1,7 @@
 import sqlite3
 from tabulate import tabulate
 
+
 def show_database_structure(db_path):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -12,15 +13,16 @@ def show_database_structure(db_path):
     print("Tables in the database:")
     for table in tables:
         print(f"- {table[0]}")
-        
+
         # Get table schema
         cursor.execute(f"PRAGMA table_info({table[0]})")
         columns = cursor.fetchall()
-        
+
         # Prepare data for tabulate
-        table_data = [[col[1], col[2], "PRIMARY KEY" if col[5] else ""] for col in columns]
+        table_data = [[col[1], col[2], "PRIMARY KEY" if col[5] else ""]
+                      for col in columns]
         headers = ["Column Name", "Data Type", "Key"]
-        
+
         print(tabulate(table_data, headers=headers, tablefmt="grid"))
         print("\n")
 
@@ -33,6 +35,7 @@ def show_database_structure(db_path):
 
     conn.close()
 
+
 if __name__ == "__main__":
-    db_path = './tesla_motors_data.db'
+    db_path = './cars_motors_data.db'
     show_database_structure(db_path)
