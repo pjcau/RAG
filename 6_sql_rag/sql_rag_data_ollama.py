@@ -18,24 +18,8 @@ from langchain_core.exceptions import OutputParserException
 MODEL_NAME = "gemma3:12b"
 TEMPERATURE = 0.0
 
-
 # Configuration
 DB_PATH = "cars_motors_data.db"
-
-
-def format_sql_results(results: List[tuple], columns: List[str]) -> str:
-    """Format SQL query results into a readable string"""
-    if not results:
-        return "No results found"
-
-    output = []
-    for row in results:
-        row_dict = dict(zip(columns, row))
-        formatted_row = "\n".join(
-            [f"{col}: {val}" for col, val in row_dict.items()])
-        output.append(formatted_row)
-
-    return "\n\n".join(output)
 
 
 def create_World_Wide_agent():
@@ -58,7 +42,7 @@ def create_World_Wide_agent():
 
     # Custom system message for World Wide-specific queries
     system_message = SystemMessage(content="""You are an AI assistant specialized in querying World Wide Motors database. 
-    The database contains information about World Wide vehicles including models, variants, prices, specifications, and sales data.
+    The database contains information about World Wide vehicles including models, prices, specifications, and sales data.
     
     When analyzing the data:
     1. Always format prices as currency with commas
@@ -68,7 +52,7 @@ def create_World_Wide_agent():
     Guidelines for your responses:
     1. If asked about trends, include specific numbers and percentages
     2. For price analysis, mention both average and range
-    3. When comparing models, cite specific differences in specifications
+    3. When comparing cars, cite specific differences in specifications
     4. If the data is insufficient, clearly state what's missing
     
     Before executing any query:
@@ -120,7 +104,7 @@ def main():
                 response = agent.invoke({"input": question})
 
                 # Print the response
-                print("\nAnswer:", response["output"])
+                print("\nAnswer:", response)
 
             except Exception as e:
                 print(f"Error processing query: {str(e)}")
